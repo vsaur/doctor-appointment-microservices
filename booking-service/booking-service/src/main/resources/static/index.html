@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Doctor Appointment Booking UI</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <h1>Doctor Appointment Booking</h1>
+        <p class="sub">Create doctor + schedule + patient → select slot → pay via Stripe → booking confirmed.</p>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="doctorTab">1) Doctor</button>
+        <button class="tab" data-tab="scheduleTab">2) Schedule</button>
+        <button class="tab" data-tab="patientTab">3) Patient</button>
+        <button class="tab" data-tab="bookingTab">4) Booking</button>
+    </nav>
+
+    <!-- =============== DOCTOR TAB =============== -->
+    <section class="card tabPanel active" id="doctorTab">
+        <h2>1) Create / Load Doctor</h2>
+
+        <div class="grid">
+            <div class="field">
+                <label>Name</label>
+                <input id="docName" placeholder="Dr. Rahul Sharma" />
+            </div>
+            <div class="field">
+                <label>Specialization</label>
+                <input id="docSpec" placeholder="Cardiologist" />
+            </div>
+            <div class="field">
+                <label>Qualification</label>
+                <input id="docQual" placeholder="MBBS, MD" />
+            </div>
+            <div class="field">
+                <label>Contact</label>
+                <input id="docContact" placeholder="9876543210" />
+            </div>
+            <div class="field full">
+                <label>Address</label>
+                <input id="docAddress" placeholder="Clinic address..." />
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn primary" id="createDoctorBtn">Create Doctor</button>
+            <button class="btn" id="clearDoctorFormBtn">Clear</button>
+        </div>
+
+        <hr class="sep"/>
+
+        <div class="grid">
+            <div class="field">
+                <label>Load Doctor by ID</label>
+                <input id="loadDoctorId" type="number" min="1" placeholder="e.g. 1" />
+                <button class="btn" id="loadDoctorBtn">Load Doctor</button>
+            </div>
+
+            <div class="field">
+                <label>Current Doctor ID (auto filled)</label>
+                <input id="currentDoctorId" type="number" min="1" placeholder="(after create/load)" />
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>Doctor Output</h3>
+            <pre id="doctorOut">Waiting...</pre>
+        </div>
+    </section>
+
+    <!-- =============== SCHEDULE TAB =============== -->
+    <section class="card tabPanel" id="scheduleTab">
+        <h2>2) Add Schedule for Doctor</h2>
+
+        <div class="grid">
+            <div class="field">
+                <label>Doctor ID</label>
+                <input id="scheduleDoctorId" type="number" min="1" placeholder="Use current doctor ID" />
+                <small class="hint">Tip: if you created/loaded a doctor in tab 1, press “Use Current Doctor”.</small>
+                <button class="btn" id="useCurrentDoctorForScheduleBtn">Use Current Doctor</button>
+            </div>
+
+            <div class="field">
+                <label>Date</label>
+                <input id="scheduleDate" type="date" />
+            </div>
+
+            <div class="field full">
+                <label>Times (comma separated)</label>
+                <input id="scheduleTimes" placeholder="e.g. 10:00, 10:30, 11:00, 12:00" />
+                <small class="hint">Format must be HH:MM (24-hour).</small>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn primary" id="addScheduleBtn">Add Schedule</button>
+            <button class="btn" id="loadDoctorSchedulesBtn">Load Doctor Schedules</button>
+        </div>
+
+        <div class="result">
+            <h3>Schedule Output</h3>
+            <pre id="scheduleOut">Waiting...</pre>
+        </div>
+    </section>
+
+    <!-- =============== PATIENT TAB =============== -->
+    <section class="card tabPanel" id="patientTab">
+        <h2>3) Create / Load Patient</h2>
+
+        <div class="grid">
+            <div class="field">
+                <label>Name</label>
+                <input id="patName" placeholder="Prem M" />
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <input id="patEmail" placeholder="prem@example.com" />
+            </div>
+            <div class="field">
+                <label>Contact</label>
+                <input id="patContact" placeholder="9876543210" />
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn primary" id="createPatientBtn">Create Patient</button>
+            <button class="btn" id="clearPatientFormBtn">Clear</button>
+        </div>
+
+        <hr class="sep"/>
+
+        <div class="grid">
+            <div class="field">
+                <label>Load Patient by ID</label>
+                <input id="loadPatientId" type="number" min="1" placeholder="e.g. 1" />
+                <button class="btn" id="loadPatientBtn">Load Patient</button>
+            </div>
+
+            <div class="field">
+                <label>Current Patient ID (auto filled)</label>
+                <input id="currentPatientId" type="number" min="1" placeholder="(after create/load)" />
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>Patient Output</h3>
+            <pre id="patientOut">Waiting...</pre>
+        </div>
+    </section>
+
+    <!-- =============== BOOKING TAB =============== -->
+    <section class="card tabPanel" id="bookingTab">
+        <h2>4) Booking → Pay</h2>
+
+        <div class="grid">
+            <div class="field">
+                <label>Doctor ID</label>
+                <input id="bookDoctorId" type="number" min="1" placeholder="Use current doctor ID" />
+                <button class="btn" id="useCurrentDoctorForBookingBtn">Use Current Doctor</button>
+            </div>
+
+            <div class="field">
+                <label>Patient ID</label>
+                <input id="bookPatientId" type="number" min="1" placeholder="Use current patient ID" />
+                <button class="btn" id="useCurrentPatientForBookingBtn">Use Current Patient</button>
+            </div>
+
+            <div class="field">
+                <label>Select Date (from doctor schedules)</label>
+                <select id="bookDateSelect">
+                    <option value="">-- Load doctor schedules first --</option>
+                </select>
+                <button class="btn" id="loadBookingDoctorBtn">Load Doctor & Dates</button>
+            </div>
+
+            <div class="field">
+                <label>Select Time (auto from schedule)</label>
+                <select id="bookTimeSelect">
+                    <option value="">-- Choose date first --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn primary" id="createBookingBtn">Create Booking & Pay</button>
+            <button class="btn" id="resetBookingBtn">Reset</button>
+        </div>
+
+        <div class="result">
+            <h3>Booking Output</h3>
+            <pre id="bookingOut">Waiting...</pre>
+        </div>
+
+        <hr class="sep"/>
+
+        <h3>Optional: Check Booking by ID</h3>
+        <div class="grid">
+            <div class="field">
+                <label>Booking ID</label>
+                <input id="checkBookingId" type="number" min="1" placeholder="e.g. 12" />
+                <button class="btn" id="checkBookingBtn">Get Booking</button>
+            </div>
+        </div>
+        <div class="result">
+            <h3>Booking Details</h3>
+            <pre id="bookingDetailsOut">Waiting...</pre>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <small>
+            Run services: Eureka(8761), Doctor(8081), Patient(8082), Booking(8083), Payment(8085).<br/>
+            Note: Never commit Stripe secretKey to GitHub.
+        </small>
+    </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
